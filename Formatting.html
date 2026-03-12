@@ -3,97 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>醫學報告排版助手 2.5</title>
+    <title>醫學報告排版助手 2.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .btn-action { @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-sm text-sm font-medium active:scale-95; }
-        .btn-secondary { @apply px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-all shadow-sm text-sm border border-gray-300 active:scale-95; }
-        .btn-medical { @apply px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all shadow-sm text-sm font-medium active:scale-95; }
-        .btn-danger { @apply px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all shadow-sm text-sm border border-red-200 active:scale-95; }
-        .btn-orange { @apply px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all shadow-sm text-sm font-medium active:scale-95; }
-        .btn-control { @apply px-3 py-1 bg-slate-700 text-white text-xs rounded hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all; }
+        /* 按鈕樣式定義 */
+        .btn-main { @apply px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-sm text-sm font-bold active:scale-95 flex items-center gap-2; }
+        .btn-secondary { @apply px-4 py-2 bg-white text-slate-700 rounded-lg hover:bg-slate-50 transition-all shadow-sm text-sm border border-slate-300 font-medium active:scale-95 flex items-center justify-center gap-2; }
+        .btn-medical { @apply px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all shadow-sm text-sm font-medium active:scale-95 flex items-center gap-2; }
+        .btn-danger { @apply px-4 py-2 bg-white text-red-600 rounded-lg hover:bg-red-50 transition-all shadow-sm text-sm border border-red-200 active:scale-95; }
+        .btn-control { @apply px-3 py-1 bg-slate-700 text-white text-xs rounded hover:bg-slate-600 disabled:opacity-30 transition-all; }
         
         textarea::-webkit-scrollbar { width: 8px; }
         textarea::-webkit-scrollbar-track { background: #f1f1f1; }
         textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* 日期選擇器隱藏處理 */
+        .date-container { @apply relative flex items-center bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-full text-xs font-bold border border-blue-200 cursor-pointer transition-colors ml-2; }
+        #datePicker { @apply absolute inset-0 opacity-0 cursor-pointer w-full; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-900 font-sans">
 
     <div class="max-w-7xl mx-auto px-4 py-6">
-        <header class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <header class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">醫學報告排版助手 <span class="text-blue-600">2.5</span></h1>
-                <p class="text-slate-500 text-sm mt-1">專為臨床醫師設計的文字處理工具</p>
+                <h1 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-lg">M</span>
+                    醫學報告排版助手 <span class="text-blue-600 font-mono">2.7</span>
+                </h1>
             </div>
-            <div class="flex gap-2">
-                <button id="copyBtn" onclick="copyToClipboard()" class="btn-action flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    複製結果
-                </button>
-                <button onclick="clearText()" class="btn-danger">清除內容</button>
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <button onclick="pasteFromClipboard()" class="px-4 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-sm font-medium text-slate-600 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>貼上
+                    </button>
+                    <button id="copyBtn" onclick="copyToClipboard()" class="px-4 py-2 hover:bg-white hover:shadow-sm rounded-lg text-sm font-bold text-blue-600 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>複製
+                    </button>
+                   <button onclick="clearText()" class="btn-danger px-4 py-2 hover:bg-white hover:shadow-sm rounded-lg text-sm font-bold text-blue-600 flex items-center gap-2">清除</button>                </div>
+                
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <div class="lg:col-span-4 xl:col-span-3 space-y-6">
-                
+            <div class="lg:col-span-3 space-y-4">
                 <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> 臨床整理
+                    <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 通用排版與編號
                     </h2>
-                    <div class="flex flex-col gap-3">
-                        <button onclick="Lab()" class="btn-medical w-full">Lab 數據趨勢化 (可指定項目)</button>
-                        <button onclick="removeXray()" class="btn-medical w-full bg-indigo-600 hover:bg-indigo-700">X-Ray 報告去雜訊</button>
-                        <button onclick="spaceToArrow()" class="btn-orange w-full">空格轉箭頭 (→)</button>
-                        <button onclick="addNumbering()" class="btn-orange w-full bg-orange-600">行首依序加數字</button>
+                    <div class="grid grid-cols-1 gap-2.5">
+                        <button onclick="addNumbering()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">1️⃣ 行首自動編號</button>
+                        <button onclick="myFunction()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">✂️ 刪除分隔線</button>
+                        <button onclick="impactFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">␣ 空格壓縮</button>
+                        <button onclick="impactlineFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">⏎ 空行壓縮</button>
+                        <button onclick="RemoveNewline()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">🚫 移除換行</button>
+                        <button onclick="dotFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">行首加點 (.)</button>
+                        <button onclick="arrFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">行首加引號 (>)</button>
+                        <button onclick="CapFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">首字大寫/其餘小寫</button>
+                        <div class="grid grid-cols-2 gap-2 mt-1">
+                            <button onclick="FirstCharFun()" class="btn-secondary !bg-orange-50 !border-orange-100 !text-orange-700 font-bold">刪首字</button>
+                            <button onclick="LastCharFun()" class="btn-secondary !bg-orange-50 !border-orange-100 !text-orange-700 font-bold">刪尾字</button>
+                        </div>
+
                     </div>
                 </section>
 
-                <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span> 通用排版
-                    </h2>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="myFunction()" class="btn-secondary">刪分隔線</button>
-                        <button onclick="impactFun()" class="btn-secondary">壓縮空白</button>
-                        <button onclick="impactlineFun()" class="btn-secondary">壓縮空行</button>
-                        <button onclick="RemoveNewline()" class="btn-secondary">移除換行</button>
-                        <button onclick="dotFun()" class="btn-secondary">行首加 .</button>
-                        <button onclick="arrFun()" class="btn-secondary">行首加 ></button>
-                        <button onclick="FirstCharFun()" class="btn-secondary">刪首字</button>
-                        <button onclick="LastCharFun()" class="btn-secondary">刪尾字</button>
-                    </div>
-                    <button onclick="CapFun()" class="w-full btn-secondary mt-3">首字大寫/其餘小寫</button>
-                </section>
-
-                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                    <h3 class="text-xs font-bold text-blue-700 mb-2">💡 小撇步</h3>
-                    <p class="text-[11px] text-blue-600 leading-relaxed">
-                        點擊 Lab 數據化後輸入 <b>P</b> 即可只提取磷離子數據。輸入多個請用逗號隔開。
-                    </p>
+                <div class="p-4 bg-slate-800 rounded-2xl text-white shadow-lg">
+                    <h3 class="text-xs font-bold text-blue-400 mb-2 flex items-center gap-2">快捷鍵提示</h3>
+                    <ul class="text-[11px] space-y-2 opacity-80 font-mono">
+                        <li><span class="text-blue-300">Ctrl+Z:</span> 復原</li>
+                        <li><span class="text-blue-300">Ctrl+Y:</span> 重作</li>
+                        <li><span class="text-blue-300">Alt+Enter:</span> 縮排</li>
+                    </ul>
                 </div>
             </div>
 
-            <div class="lg:col-span-8 xl:col-span-9">
-                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
-                    <div class="bg-slate-800 px-4 py-2 flex justify-between items-center text-slate-400">
+            <div class="lg:col-span-9 space-y-4">
+                
+                <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="Lab()" class="btn-medical">🧪 Lab 數據趨勢</button>
+                        <button onclick="removeXray()" class="btn-secondary !border-emerald-200 !text-emerald-700">🩻 X-Ray 去雜訊</button>
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="text-[10px] text-slate-400 mr-2 font-bold uppercase"></div>
+                        <button onclick="triggerDatePicker()" class="date-container px-4 py-2 hover:bg-gray hover:shadow-sm rounded-lg text-sm font-bold text-blue-600 flex items-center gap-2" >
+                            插入日期 </button>
+                            <input type="date" id="datePicker" onchange="handleDateChange(this)">
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="bg-slate-800 px-4 py-2 flex justify-between items-center text-slate-400 border-b border-slate-700">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-mono text-white/70 mr-2">EDITOR</span>
-                            <button onclick="undo()" id="undoBtn" class="btn-control" title="復原">↩ 復原</button>
-                            <button onclick="redo()" id="redoBtn" class="btn-control" title="重作">↪ 重作</button>
-                            <button onclick="insertCurrentDate()" class="text-[10px] bg-slate-700 hover:bg-blue-600 text-white px-2 py-0.5 rounded transition-colors border border-slate-600 ml-2">
-                                📅 插入今日：<span id="displayDate"></span>
-                            </button>
+                            <span class="text-[10px] font-mono text-white/50 mr-4">CLINICAL_EDITOR_V2.7</span>
+                            <button onclick="undo()" id="undoBtn" class="btn-control" title="復原">↩</button>
+                            <button onclick="redo()" id="redoBtn" class="btn-control" title="重作">↪</button>
                         </div>
-                        <span id="charCount" class="text-xs">0 字元</span>
+                        <span id="charCount" class="text-[10px] font-mono tracking-wider">0 CHARS</span>
                     </div>
                     <textarea id="inputtext" 
-                        class="w-full p-6 h-[700px] focus:outline-none font-mono text-sm leading-relaxed bg-white"
-                        placeholder="在此貼上臨床報告內容..."
+                        class="w-full p-8 h-[650px] focus:outline-none font-mono text-sm leading-relaxed bg-white text-slate-800"
+                        placeholder="在此貼上內容或使用上方功能鍵..."
                         oninput="saveState(); updateCharCount();"
                         onkeydown="handleKeyDown(event)"></textarea>
                 </div>
@@ -105,6 +123,16 @@
         const textarea = document.getElementById('inputtext');
         let history = [''];
         let historyStep = 0;
+        let lastDate = ""; // 用於記憶上次選擇的日期
+
+        // 初始化
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('datePicker').value = today;
+            lastDate = today;
+            document.getElementById('selectedDateDisplay').innerText = today;
+            updateUndoRedoButtons();
+        };
 
         function saveState() {
             if (textarea.value === history[historyStep]) return;
@@ -137,27 +165,8 @@
             document.getElementById('redoBtn').disabled = historyStep === history.length - 1;
         }
 
-        function updateDisplayDate() {
-            const d = new Date();
-            const dateStr = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-            document.getElementById('displayDate').innerText = dateStr;
-        }
-        updateDisplayDate();
-
-        function insertCurrentDate() {
-            const d = new Date();
-            const dateStr = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            textarea.value = textarea.value.substring(0, start) + dateStr + textarea.value.substring(end);
-            textarea.focus();
-            textarea.selectionStart = textarea.selectionEnd = start + dateStr.length;
-            saveState();
-            updateCharCount();
-        }
-
         function updateCharCount() {
-            document.getElementById('charCount').innerText = textarea.value.length + " 字元";
+            document.getElementById('charCount').innerText = textarea.value.length + " CHARS";
         }
 
         function clearText() {
@@ -168,6 +177,47 @@
             }
         }
 
+        // --- 核心改動：日期邏輯 ---
+        
+        // 點擊藍色標籤時觸發
+        function triggerDatePicker() {
+            if (lastDate === "") {
+                document.getElementById('datePicker').showPicker();
+            } else {
+                // 如果已經有日期，直接插入，不彈出視窗
+                insertTextAtCursor(lastDate);
+            }
+        }
+
+        function handleDateChange(elm) {
+            const dateStr = elm.value;
+            if (!dateStr) return;
+            lastDate = dateStr;
+            document.getElementById('selectedDateDisplay').innerText = dateStr;
+            insertTextAtCursor(dateStr);
+        }
+
+        function insertTextAtCursor(text) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = start + text.length;
+            saveState();
+            updateCharCount();
+        }
+
+        // 貼上功能
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                insertTextAtCursor(text);
+            } catch (err) {
+                alert("瀏覽器安全性限制，請直接使用 Ctrl+V 貼上");
+            }
+        }
+
+        // 複製功能
         async function copyToClipboard() {
             const content = textarea.value;
             if (!content) return;
@@ -175,50 +225,38 @@
             const originalHTML = btn.innerHTML;
             try {
                 await navigator.clipboard.writeText(content);
-                btn.innerHTML = '✅ 已複製！';
-                btn.classList.add('bg-green-600');
+                btn.innerHTML = '<span>✅ 已複製全文</span>';
+                btn.classList.replace('text-blue-600', 'text-green-600');
             } catch (err) {
                 textarea.select();
                 document.execCommand('copy');
-                btn.innerHTML = '✅ 已複製！';
+                btn.innerHTML = '<span>✅ 已複製全文</span>';
             }
             setTimeout(() => {
                 btn.innerHTML = originalHTML;
-                btn.classList.remove('bg-green-600');
+                btn.classList.replace('text-green-600', 'text-blue-600');
             }, 2000);
         }
 
-        // --- 核心邏輯區 ---
+        // --- 排版處理邏輯 ---
 
         function Lab() {
             const fullLabMap = [
-                { key: "WBC", nick: "WBC" },
-                { key: "Hb", nick: "Hb" },
-                { key: "Platelet", nick: "PLT" },
-                { key: "Glucose finger AC", nick: "Glu-AC" },
-                { key: "BUN", nick: "BUN" },
-                { key: "Cr", nick: "Cr" },
-                { key: "Na", nick: "Na" },
-                { key: "K", nick: "K" },
-                { key: "Ca", nick: "Ca" },
-                { key: "P", nick: "P" },
-                { key: "ALT", nick: "ALT" },
-                { key: "AST", nick: "AST" },
-                { key: "Albumin(BCG)", nick: "Alb" },
-                { key: "HbA1C", nick: "A1c" },
-                { key: "UPCR", nick: "UPCR" },
-                { key: "UACR", nick: "UACR" }
+                { key: "WBC", nick: "WBC" }, { key: "Hb", nick: "Hb" },
+                { key: "Platelet", nick: "PLT" }, { key: "Glucose finger AC", nick: "Glu-AC" },
+                { key: "BUN", nick: "BUN" }, { key: "Cr", nick: "Cr" },
+                { key: "Na", nick: "Na" }, { key: "K", nick: "K" },
+                { key: "Ca", nick: "Ca" }, { key: "P", nick: "P" },
+                { key: "ALT", nick: "ALT" }, { key: "AST", nick: "AST" },
+                { key: "Albumin(BCG)", nick: "Alb" }, { key: "HbA1C", nick: "A1c" },
+                { key: "UPCR", nick: "UPCR" }, { key: "UACR", nick: "UACR" }
             ];
 
-            const targetInput = prompt("請輸入要指定的 Lab 項目 (例如: P) 或留空以顯示全部", "");
+            const targetInput = prompt("指定 Lab 項目 (如: P, Cr) 或留空顯示全部", "");
             if (targetInput === null) return;
 
-            // 解析使用者輸入，支援逗號分隔
             const targetList = targetInput.trim() === "" ? [] : targetInput.split(',').map(s => s.trim().toLowerCase());
-
-            const labMap = targetList.length === 0 
-                ? fullLabMap 
-                : fullLabMap.filter(item => targetList.includes(item.key.toLowerCase()) || targetList.includes(item.nick.toLowerCase()));
+            const labMap = targetList.length === 0 ? fullLabMap : fullLabMap.filter(item => targetList.includes(item.key.toLowerCase()) || targetList.includes(item.nick.toLowerCase()));
 
             const lines = textarea.value.split('\n');
             let dataMap = {};
@@ -226,13 +264,10 @@
             lines.forEach(line => {
                 const trimmedLine = line.trim();
                 for (let lab of labMap) {
-                    // 使用正則表達式精確匹配行首的項目名稱，避免 P 抓到 Platelet
                     const escapedKey = lab.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     const regex = new RegExp("^" + escapedKey + "(\\s|\\t|$)");
-                    
                     if (regex.test(trimmedLine)) {
                         let content = trimmedLine.substring(lab.key.length).trim();
-                        // 匹配數字
                         let matches = content.match(/(\d+(\.\d+)?)/g);
                         if (matches) {
                             dataMap[lab.key] = `${lab.nick}: ${matches.join(' -> ')}`;
@@ -242,9 +277,7 @@
             });
 
             let finalOutput = [];
-            labMap.forEach(lab => {
-                if (dataMap[lab.key]) finalOutput.push(dataMap[lab.key]);
-            });
+            labMap.forEach(lab => { if (dataMap[lab.key]) finalOutput.push(dataMap[lab.key]); });
 
             if (finalOutput.length > 0) {
                 textarea.value = finalOutput.join('\n');
@@ -265,11 +298,6 @@
             const filters = ["收件號", "床號：", "放射師："];
             textarea.value = str.split('\n').filter(line => !filters.some(f => line.includes(f))).join('\n');
             impactlineFun();
-            saveState();
-        }
-
-        function spaceToArrow() {
-            textarea.value = textarea.value.replace(/ +/g, ' -> ');
             saveState();
             updateCharCount();
         }
@@ -293,7 +321,7 @@
         }
 
         function impactlineFun() {
-            textarea.value = textarea.value.replace(/\n\s*\n/g, '\n');
+            textarea.value = textarea.value.replace(/\n\s*\n/g, '\n').trim();
             saveState();
         }
 
@@ -332,20 +360,14 @@
         function handleKeyDown(e) {
             if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
             if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
-            if (e.altKey) {
+            if (e.altKey && e.key === 'Enter') {
                 e.preventDefault();
                 const lines = textarea.value.split('\n');
-                textarea.value = e.shiftKey ? 
-                    lines.map(line => line.startsWith('   ') ? line.substring(3) : line.trimStart()).join('\n') :
-                    lines.map(line => '   ' + line).join('\n');
+                textarea.value = lines.map(line => '    ' + line).join('\n');
                 saveState();
             }
             updateCharCount();
         }
-        updateUndoRedoButtons();
     </script>
 </body>
 </html>
-
-
-
