@@ -78,7 +78,7 @@
                     <ul class="text-[11px] space-y-2 opacity-80 font-mono">
                         <li><span class="text-blue-300">Ctrl+Z:</span> 復原</li>
                         <li><span class="text-blue-300">Ctrl+Y:</span> 重作</li>
-                        <li><span class="text-blue-300">Alt:</span> 縮排</li>
+                        <li><span class="text-blue-300">Alt+Enter:</span> 縮排</li>
                     </ul>
                 </div>
             </div>
@@ -360,7 +360,7 @@
         function handleKeyDown(e) {
             if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
             if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
-            if (e.altKey) {
+            if (e.altKey && e.key === 'Enter') {
                 e.preventDefault();
                 const lines = textarea.value.split('\n');
                 textarea.value = lines.map(line => '    ' + line).join('\n');
@@ -371,4 +371,5 @@
     </script>
 </body>
 </html>
+
 
