@@ -57,11 +57,12 @@
                         <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 通用排版與編號
                     </h2>
                     <div class="grid grid-cols-1 gap-2.5">
-                        <button onclick="addNumbering()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">1️⃣ 行首自動編號</button>
                         <button onclick="myFunction()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">✂️ 刪除分隔線</button>
                         <button onclick="impactFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">␣ 空格壓縮</button>
                         <button onclick="impactlineFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">⏎ 空行壓縮</button>
                         <button onclick="RemoveNewline()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">🚫 移除換行</button>
+                        <button onclick="spaceToArrow()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">空格轉箭頭 (→)</button>
+                        <button onclick="addNumbering()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">1️⃣ 行首編號</button>
                         <button onclick="dotFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">行首加點 (.)</button>
                         <button onclick="arrFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">行首加引號 (>)</button>
                         <button onclick="CapFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">首字大寫/其餘小寫</button>
@@ -243,7 +244,7 @@
         function Lab() {
             const fullLabMap = [
                 { key: "WBC", nick: "WBC" }, { key: "Hb", nick: "Hb" },
-                { key: "Platelet", nick: "PLT" }, { key: "Glucose finger AC", nick: "Glu-AC" },
+                { key: "Platelet", nick: "PLT" }, { key: "Glucose finger AC", nick: "Glu-AC" }, { key: CRP", nick: "CRP" },
                 { key: "BUN", nick: "BUN" }, { key: "Cr", nick: "Cr" },
                 { key: "Na", nick: "Na" }, { key: "K", nick: "K" },
                 { key: "Ca", nick: "Ca" }, { key: "P", nick: "P" },
@@ -270,7 +271,7 @@
                         let content = trimmedLine.substring(lab.key.length).trim();
                         let matches = content.match(/(\d+(\.\d+)?)/g);
                         if (matches) {
-                            dataMap[lab.key] = `${lab.nick}: ${matches.join(' -> ')}`;
+                            dataMap[lab.key] = `${lab.nick}: ${matches.join(' → ')}`;
                         }
                     }
                 }
@@ -302,6 +303,13 @@
             updateCharCount();
         }
 
+        function spaceToArrow() {
+            textarea.value = textarea.value.replace(/ +/g, ' → ');
+            saveState();
+            updateCharCount();
+        }
+
+        
         function addNumbering() {
             const lines = textarea.value.split('\n');
             let count = 1;
@@ -371,5 +379,6 @@
     </script>
 </body>
 </html>
+
 
 
