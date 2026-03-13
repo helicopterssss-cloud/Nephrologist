@@ -34,7 +34,7 @@
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                    <button onclick="pasteFromClipboard()" class="px-4 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-sm font-medium text-slate-600 flex items-center gap-2">
+                    <button onclick="pasteFromClipboard()" class="px-4 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-sm font-medium text-blue-600 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>貼上
@@ -57,11 +57,14 @@
                         <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 通用排版與編號
                     </h2>
                     <div class="grid grid-cols-1 gap-2.5">
-                        <button onclick="addNumbering()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">1️⃣ 行首自動編號</button>
+                        <button onclick="spaceToArrow()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">空格轉箭頭 (→)</button>
+
+
                         <button onclick="myFunction()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">✂️ 刪除分隔線</button>
                         <button onclick="impactFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">␣ 空格壓縮</button>
                         <button onclick="impactlineFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">⏎ 空行壓縮</button>
                         <button onclick="RemoveNewline()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">🚫 移除換行</button>
+                        <button onclick="addNumbering()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">1️⃣ 行首編號</button>
                         <button onclick="dotFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">行首加點 (.)</button>
                         <button onclick="arrFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">行首加引號 (>)</button>
                         <button onclick="CapFun()" class="btn-secondary !bg-orange-50 !border-orange-200 !text-orange-700 font-bold">首字大寫/其餘小寫</button>
@@ -302,6 +305,13 @@
             updateCharCount();
         }
 
+
+        function spaceToArrow() {
+            textarea.value = textarea.value.replace(/ +/g, ' -> ');
+            saveState();
+            updateCharCount();
+        }
+
         function addNumbering() {
             const lines = textarea.value.split('\n');
             let count = 1;
@@ -371,4 +381,3 @@
     </script>
 </body>
 </html>
-
